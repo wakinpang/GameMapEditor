@@ -1,0 +1,132 @@
+﻿<UserControl x:Class="MapEditorControl.LibraryControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MapEditorControl"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:util="clr-namespace:MapEditorControl.InnerUtil"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Platform"  
+             xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:vm="clr-namespace:MapEditorControl.ViewModel"
+             xmlns:uc="clr-namespace:MapEditorControl;assembly=MapEditorControl"
+             mc:Ignorable="d" 
+             d:DesignHeight="609" d:DesignWidth="263">
+
+    <UserControl.Resources>
+        <vm:ViewModelLocator x:Key="Locator"/>
+        <util:LibraryControlConverter x:Key="mscv"/>
+        <util:MonsterGiveFeedBackConverter x:Key="msgf"/>
+        <util:MapCheckedConverter x:Key="mpcv"/>
+        <util:NpcDragConverter x:Key="nccv"/>
+        <util:MusicCheckedConverter x:Key="mucv"/>
+    </UserControl.Resources>
+
+    <TabControl TabStripPlacement="Top"
+                DataContext="{Binding Source={StaticResource Locator}, Path=LibraryControl}">
+        <TabItem Header="地图库">
+            <ListView ItemsSource="{Binding MapSection}" x:Name="map_List">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <RadioButton Content="{Binding Name}" IsChecked="{Binding IsChecked, Mode=TwoWay}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Checked">
+                                    <command:EventToCommand Command="{Binding DataContext.MapChecked, 
+                                                                        RelativeSource={RelativeSource AncestorType={x:Type TabControl}, 
+                                                                        Mode=FindAncestor}}"
+                                                            EventArgsConverter="{StaticResource mpcv}"
+                                                            EventArgsConverterParameter="{Binding}"
+                                                            PassEventArgsToCommand="True"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </RadioButton>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <!--DynamicResource -->
+            </ListView>
+        </TabItem>
+
+        <TabItem Header="NPC库">
+            <ListView ItemsSource="{Binding NpcSection}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Image Source="{Binding Path}" Margin="20">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="PreviewMouseMove">
+                                    <command:EventToCommand Command="{Binding DataContext.NpcMouseMove,
+                                                            RelativeSource={RelativeSource AncestorType={x:Type TabControl}, Mode=FindAncestor}}"
+                                                            EventArgsConverterParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Image},Mode=FindAncestor}}"
+                                                            EventArgsConverter="{StaticResource nccv}"
+                                                            PassEventArgsToCommand="True"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </Image>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </TabItem>
+
+        <TabItem Header="怪物库">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="97*"/>
+                    <RowDefinition Height="8*"/>
+                    <RowDefinition Height="8*"/>
+                </Grid.RowDefinitions>
+
+                <ListView ItemsSource="{Binding MonsterSection}" x:Name="monster_ListView" SelectedItem="{Binding SelectMonster, Mode=OneWayToSource}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" >
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="PreviewMouseMove">
+                                        <command:EventToCommand Command="{Binding DataContext.MonsterMouseMove, 
+                                                                        RelativeSource={RelativeSource AncestorType={x:Type TabControl}, 
+                                                                        Mode=FindAncestor, AncestorLevel=1}}"
+                                                                EventArgsConverter="{StaticResource mscv}"
+                                                                EventArgsConverterParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type TextBlock}, Mode=FindAncestor}}"
+                                                                PassEventArgsToCommand="True"/>
+                                    </i:EventTrigger>
+                                    
+                                    <i:EventTrigger EventName="GiveFeedBack">
+                                        <command:EventToCommand Command="{Binding DataContext.MonsterGiveFeedBack, 
+                                                                        RelativeSource={RelativeSource AncestorType={x:Type TabControl},
+                                                                        Mode=FindAncestor, AncestorLevel=1}}"
+                                                                EventArgsConverter="{StaticResource msgf}"
+                                                                EventArgsConverterParameter="{Binding}"
+                                                                PassEventArgsToCommand="True"/>
+                                    </i:EventTrigger>  
+                                </i:Interaction.Triggers>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <Button Content="新建.." Margin="6" Grid.Row="1"
+                        Command="{Binding NewMonsterButton}"/>
+                <Button Content="修改.." Margin="6" Grid.Row="2"
+                        Command="{Binding ChangeMonsterButton}"/>
+            </Grid>
+        </TabItem>
+
+        <TabItem Header="音效库">
+            <ListView ItemsSource="{Binding MusicSection}" x:Name="music_List">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <RadioButton Content="{Binding Name}" IsChecked="{Binding IsChecked}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Checked">
+                                    <command:EventToCommand Command="{Binding DataContext.MusicChecked,
+                                                                    RelativeSource={RelativeSource AncestorType={x:Type TabControl},Mode=FindAncestor}}"
+                                                            EventArgsConverterParameter="{Binding}"
+                                                            EventArgsConverter="{StaticResource mucv}"
+                                                            PassEventArgsToCommand="True"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </RadioButton>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </TabItem>
+    </TabControl>
+</UserControl>

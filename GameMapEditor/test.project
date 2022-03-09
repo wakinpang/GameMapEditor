@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Project>
+  <Name>testchange</Name>
+  <ProjectPath>D:\WorkSpace\Document</ProjectPath>
+  <DataBase>
+    <DataBaseIP>127.0.0.1</DataBaseIP>
+    <DataBasePort>3306</DataBasePort>
+    <DataBaseName>test</DataBaseName>
+    <DataBaseUserName>root</DataBaseUserName>
+    <DataBasePassword>
+    </DataBasePassword>
+  </DataBase>&gt;
+
+	<Resource><MapSourcePath>D:\</MapSourcePath><MapSourceOutputPath>D:\</MapSourceOutputPath><NpcPicturePath>D:\</NpcPicturePath><MonsterPicturePath>D:\</MonsterPicturePath><MapSoundPath>D:\</MapSoundPath></Resource>&gt;
+</Project>

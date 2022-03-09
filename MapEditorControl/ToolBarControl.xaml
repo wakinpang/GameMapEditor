@@ -1,0 +1,155 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MapEditorControl"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:Custom="http://metro.mahapps.com/winfx/xaml/controls" x:Class="MapEditorControl.ToolBarControl"
+             xmlns:vm="clr-namespace:MapEditorControl.ViewModel"
+             xmlns:util="clr-namespace:MapEditorControl.InnerUtil"
+             mc:Ignorable="d" 
+             d:DesignHeight="28" d:DesignWidth="1126">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <Style x:Key="ToggleButtonStyleVSStyle" TargetType="{x:Type ToggleButton}">
+                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Custom:ControlsHelper.CornerRadius" Value="3"/>
+                <Setter Property="FontFamily" Value="{DynamicResource DefaultFont}"/>
+                <Setter Property="FontSize" Value="{DynamicResource UpperCaseContentFontSize}"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="MinHeight" Value="25"/>
+                <Style.Triggers>
+                    <Trigger Property="IsChecked" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource GrayBrush2}"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource GrayBrush2}"/>
+                    </Trigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsMouseOver" Value="True"/>
+                            <Condition Property="IsChecked" Value="False"/>
+                        </MultiTrigger.Conditions>
+                        <Setter Property="Background" Value="{DynamicResource GrayBrush8}"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource GrayBrush8}"/>
+                    </MultiTrigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsMouseOver" Value="True"/>
+                            <Condition Property="IsChecked" Value="True"/>
+                        </MultiTrigger.Conditions>
+                        <Setter Property="Background" Value="{DynamicResource GrayBrush3}"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource GrayBrush3}"/>
+                    </MultiTrigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource GrayBrush7}"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource GrayBrush7}"/>
+                    </Trigger>
+                    <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                        <Setter Property="BorderBrush" Value="{DynamicResource ButtonMouseOverBorderBrush}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True"/>
+
+            <util:ToolBarItemValidateConverter x:Key="validateConverter"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <ToolBar Grid.Column="0" Grid.Row="1" Margin="2 0 0 0" DataContext="{Binding Source={StaticResource Locator}, Path=ToolBarControl}">
+        <ToggleButton
+            Style="{DynamicResource ToggleButtonStyleVSStyle}"
+            IsChecked="{Binding DragTool}"
+            ToolTip="拖放工具">
+            <iconPacks:PackIconFontAwesome Kind="MousePointer" />
+            <ToggleButton.IsEnabled>
+                <MultiBinding Converter="{StaticResource validateConverter}">
+                    <Binding Path="CanEdit"></Binding>
+                    <Binding Path="ProjectValid"></Binding>
+                </MultiBinding>
+            </ToggleButton.IsEnabled>
+        </ToggleButton>
+        <ToggleButton Style="{DynamicResource ToggleButtonStyleVSStyle}"
+                      IsChecked="{Binding AreaTool}"
+                      ToolTip="区域工具">
+            <iconPacks:PackIconFontAwesome Kind="PencilSquareOutline" />
+            <ToggleButton.IsEnabled>
+                <MultiBinding Converter="{StaticResource validateConverter}">
+                    <Binding Path="CanEdit"></Binding>
+                    <Binding Path="ProjectValid"></Binding>
+                </MultiBinding>
+            </ToggleButton.IsEnabled>
+        </ToggleButton>
+        <ToggleButton Style="{DynamicResource ToggleButtonStyleVSStyle}"
+                      IsChecked="{Binding PenTool}"
+                      ToolTip="描点工具">
+            <iconPacks:PackIconFontAwesome Kind="Pencil" />
+            <ToggleButton.IsEnabled>
+                <MultiBinding Converter="{StaticResource validateConverter}">
+                    <Binding Path="CanEdit"></Binding>
+                    <Binding Path="ProjectValid"></Binding>
+                </MultiBinding>
+            </ToggleButton.IsEnabled>
+        </ToggleButton>
+        <ToggleButton Style="{DynamicResource ToggleButtonStyleVSStyle}"
+                      IsChecked="{Binding PointTool}"
+                      ToolTip="出生点工具">
+            <iconPacks:PackIconFontAwesome Kind="HandPointerOutline" />
+            <ToggleButton.IsEnabled>
+                <MultiBinding Converter="{StaticResource validateConverter}">
+                    <Binding Path="CanEdit"></Binding>
+                    <Binding Path="ProjectValid"></Binding>
+                </MultiBinding>
+            </ToggleButton.IsEnabled>
+        </ToggleButton>
+        <Separator/>
+        <StackPanel>
+            <CheckBox Content="半透" Margin="3 3 0 0"
+                      IsChecked="{Binding Transparent}"
+                      ToolTip="设置是否是半透区域">
+                <CheckBox.IsEnabled>
+                    <MultiBinding Converter="{StaticResource validateConverter}">
+                        <Binding Path="CanEdit"></Binding>
+                        <Binding Path="ProjectValid"></Binding>
+                    </MultiBinding>
+                </CheckBox.IsEnabled>
+            </CheckBox>
+        </StackPanel>
+        <StackPanel>
+            <CheckBox Content="安全区" Margin="3 3 0 0"
+                      IsChecked="{Binding Safety}"
+                      ToolTip="设置是否是安全区域">
+                <CheckBox.IsEnabled>
+                    <MultiBinding Converter="{StaticResource validateConverter}">
+                        <Binding Path="CanEdit"></Binding>
+                        <Binding Path="ProjectValid"></Binding>
+                    </MultiBinding>
+                </CheckBox.IsEnabled>
+            </CheckBox>
+        </StackPanel>
+        <StackPanel>
+            <CheckBox Content="钓鱼" Margin="3 3 0 0"
+                      IsChecked="{Binding Fishing}"
+                      ToolTip="设置是否是钓鱼区域">
+                <CheckBox.IsEnabled>
+                    <MultiBinding Converter="{StaticResource validateConverter}">
+                        <Binding Path="CanEdit"></Binding>
+                        <Binding Path="ProjectValid"></Binding>
+                    </MultiBinding>
+                </CheckBox.IsEnabled>
+            </CheckBox>
+        </StackPanel>
+        <Separator/>
+        <Button ToolTip="同步当前编辑到数据库"
+                Command="{Binding SyncHandler}">
+            <iconPacks:PackIconMaterial Kind="Sync" />
+            <Button.IsEnabled>
+                <MultiBinding Converter="{StaticResource validateConverter}">
+                    <Binding Path="CanEdit"></Binding>
+                    <Binding Path="ProjectValid"></Binding>
+                </MultiBinding>
+            </Button.IsEnabled>
+        </Button>
+    </ToolBar>
+</UserControl>

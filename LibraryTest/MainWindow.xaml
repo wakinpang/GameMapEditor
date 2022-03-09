@@ -1,0 +1,81 @@
+﻿<Controls:MetroWindow x:Class="LibraryTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:uc="clr-namespace:MapEditorControl;assembly=MapEditorControl"
+        Style="{StaticResource VSWindowStyleKey}"
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:local="clr-namespace:LibraryTest"
+        xmlns:vm="clr-namespace:LibraryTest.ViewModel"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Height="960" Width="1280" >
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/VS/Colors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/VS/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style x:Key="VSWindowStyleKey" TargetType="{x:Type Controls:MetroWindow}">
+                <Setter Property="GlowBrush" Value="{DynamicResource WindowGlowBrush}" />
+                <Setter Property="ShowTitleBar" Value="True" />
+                <Setter Property="TitleForeground" Value="{DynamicResource WindowTitleForeground}" />
+            </Style>
+
+            <vm:ViewModelLocator x:Key="Locator"/>
+            <local:ValueConverter x:Key="ValueConverter"/>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Window.DataContext>
+        <Binding Source="{StaticResource Locator}" Path="ProjectConfig"></Binding>
+    </Window.DataContext>
+
+
+    <Grid DataContext="{Binding ProjectConfig}">
+        <uc:ProjectConfigControl
+            ProjectName="{Binding ProjectName}"
+            ProjectPath="{Binding ProjectPath}"
+            DatabaseIP="{Binding DatabaseIP}"
+            DatabasePort="{Binding DatabasePort}"
+            DatabaseName="{Binding DatabaseName}"
+            DatabaseUserName="{Binding DatabaseUserName}"
+            DatabasePassword="{Binding DatabasePassword}"
+            MapSourcePath="{Binding MapSourcePath}"
+            MapSourceOutputPath="{Binding MapSourceOutputPath}"
+            NpcPicturePath="{Binding NpcPicturePath}"
+            MonsterPicturePath="{Binding MonsterPicturePath}"
+            MapSoundPath="{Binding MapSoundPath}"
+            ></uc:ProjectConfigControl>
+        <!--<Grid.ColumnDefinitions>
+            <ColumnDefinition Width="8*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+            <uc:MapEditorControl Grid.Column="0"
+                                 TileWidth="{Binding TileWidth}"
+                                 TileHeight="{Binding TileHeight}"
+                                 BackgroundSource="{Binding BackgroundSource}"
+                                 Zoom="{Binding Zoom}"
+                                 ContentWidthRatio="{Binding ContentWidthRatio, Mode=OneWayToSource}"
+                                 ContentHeightRatio="{Binding ContentHeightRatio, Mode=OneWayToSource}"
+                                 ScrollVerticalOffsetRatio="{Binding ContentVerticalOffsetRatio, Mode=TwoWay}"
+                                 ScrollHorizentalOffsetRatio="{Binding ContentHorizentalOffsetRatio, Mode=TwoWay}"
+                                 ></uc:MapEditorControl>
+            
+            <uc:NavigationControl Grid.Column="1"
+                              x:Name="nc_Navigation"
+                              BackgroundSource="{Binding BackgroundSource}"
+                              ContentWidthRatio="{Binding ContentWidthRatio}"
+                              ContentHeightRatio="{Binding ContentHeightRatio}"
+                              ContentVerticalOffset="{Binding ContentVerticalOffsetRatio, Mode=TwoWay}"
+                              ContentHorizentalOffset="{Binding ContentHorizentalOffsetRatio, Mode=TwoWay}"
+                              Zoom="{Binding Zoom, Mode=OneWayToSource}"
+                              Margin="20">
+            </uc:NavigationControl>-->
+    </Grid>
+
+</Controls:MetroWindow>

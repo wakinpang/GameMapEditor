@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<config>
+	<excel>E:\svn\rj_engine\art\GameEditor\excel\</excel>
+	<res>E:\svn\rj_engine\art\GameEditor\role\body\</res>
+	<groupCount>500</groupCount>
+</config>

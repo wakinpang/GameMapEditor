@@ -1,0 +1,44 @@
+﻿<scene>
+	<res>
+		<effect id="1" url="29" type="uv" name="跳跃点"/>
+		<effect id="2" url="900101" type="uv" name="发光"/>
+		<effect id="3" url="900102" type="uv" name="烟"/>
+		<effect id="4" url="900103" type="uv" name="雨露"/>
+		<effect id="5" url="900104" type="uv" name="月亮樱花"/>
+		<effect id="6" url="900105" type="uv" name="水母"/>
+		<effect id="7" url="900106" type="uv" name="火"/>
+	</res>
+
+    <items>
+        <item className="Jump" src="1" x="1587" y="734" targetX="2866" targetY="1206" offsetRadiu="70" actionStr="14,15,16" offsetEnd="14"/>
+        <item className="Jump" src="1" x="2866" y="1206" targetX="1587" targetY="734" offsetRadiu="70" actionStr="14,15,16" offsetEnd="14" angle="180"/>
+        
+        <item className="Jump" src="1" x="3388" y="1708" targetX="2256" targetY="1983" offsetRadiu="70" actionStr="14,15,16" offsetEnd="14" angle="180"/>
+        <item className="Jump" src="1" x="2256" y="1983" targetX="3388" targetY="1708" offsetRadiu="70" actionStr="14,15,16" offsetEnd="14"/>
+        
+        <item className="Jump" src="1" x="1702" y="3604" targetX="2140" targetY="3162" offsetRadiu="0" actionStr="17,18,19" offsetEnd="10"/>
+        <item className="Jump" x="2088" y="3170" targetX="1702" targetY="3604" offsetRadiu="70" actionStr="17,18,19" offsetEnd="7"/>
+        
+        <item className="Jump" src="1" x="2716" y="2842" targetX="2088" targetY="3170" offsetRadiu="0" actionStr="11,12,13" offsetEnd="7" angle="180"/>
+        <item className="Jump" x="2140" y="3162" targetX="2716" targetY="2842" offsetRadiu="70" actionStr="11,12,13" offsetEnd="10"/>
+        
+        <item  src="6" x="228" y="3262" scale="0.62"/>
+        <item  src="5" x="2008" y="838" scale="0.3"/>
+        <item  src="3" x="3068" y="1662"/>
+        <item  src="3" x="2744" y="1822"/>
+        <item  src="4" x="2688" y="3506" scale="0.27" blend="add" scaleTime="0.5"/>
+        <item  src="4" x="2700" y="3500" scale="0.27" blend="add" scaleTime="0.5"/>
+        <item  src="4" x="2688" y="3525" scale="0.27" blend="add" scaleTime="0.5"/>
+        
+        <item  src="7" x="528" y="3774" scale="1.06" blend="add"/>
+        <item  src="7" x="1060" y="3918" scale="1.06" blend="add"/>
+        <item  src="7" x="404" y="3082" scale="1.06" blend="add"/>
+        <item  src="7" x="1816" y="4450" scale="1.06" blend="add"/>
+        <item  src="7" x="1584" y="3810" scale="1.06" blend="add"/>
+        <item  src="7" x="1620" y="3418" scale="1.06" blend="add"/>
+        <item  src="7" x="772" y="2946" scale="1.06" blend="add"/>
+        
+        <item  src="2" x="3608" y="3750" scale="0.65" blend="add"/>
+        <item  src="2" x="3000" y="3362" scale="0.53" blend="add"/>
+    </items>
+</scene>

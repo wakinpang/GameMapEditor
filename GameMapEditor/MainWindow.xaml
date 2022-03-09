@@ -1,0 +1,536 @@
+﻿<Controls:MetroWindow x:Class="GameMapEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GameMapEditor"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        mc:Ignorable="d"
+        Style="{StaticResource VSWindowStyleKey}"
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:uc="clr-namespace:MapEditorControl;assembly=MapEditorControl"
+        xmlns:ucutil="clr-namespace:MapEditorControl.InnerUtil;assembly=MapEditorControl"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Platform"  
+        xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        xmlns:util="clr-namespace:GameMapEditor.InnerUtil"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        WindowStartupLocation="CenterScreen"
+        Title="2D地图编辑器 - Develepment Edition" Height="900" Width="1600">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/VS/Colors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/VS/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource MetroTabItem}">
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrushNormal}" />
+                <!--  special property for header font size  -->
+                <Setter Property="Controls:ControlsHelper.HeaderFontSize" Value="{DynamicResource TabItemFontSize}" />
+                <Setter Property="Padding" Value="5 5 5 5" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type TabItem}">
+                            <Border x:Name="Border"
+                            HorizontalAlignment="Stretch"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                                <StackPanel x:Name="PART_Content" Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Controls:ContentControlEx x:Name="ContentSite"
+                                                       Padding="{TemplateBinding Padding}"
+                                                       Foreground="{TemplateBinding Foreground}"
+                                                       FontStyle="{TemplateBinding FontStyle}"
+                                                       FontFamily="{TemplateBinding FontFamily}"
+                                                       FontSize="{TemplateBinding Controls:ControlsHelper.HeaderFontSize}"
+                                                       FontWeight="{TemplateBinding Controls:ControlsHelper.HeaderFontWeight}"
+                                                       FontStretch="{TemplateBinding Controls:ControlsHelper.HeaderFontStretch}"
+                                                       Content="{TemplateBinding Header}"
+                                                       ContentCharacterCasing="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(Controls:ControlsHelper.ContentCharacterCasing)}"
+                                                       ContentStringFormat="{TemplateBinding HeaderStringFormat}"
+                                                       ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                                       ContentTemplateSelector="{TemplateBinding HeaderTemplateSelector}"
+                                                       DockPanel.Dock="Top"
+                                                       RecognizesAccessKey="True"
+                                                       SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                </StackPanel>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="TabStripPlacement" Value="Left">
+                                    <Setter Property="LayoutTransform" TargetName="PART_Content">
+                                        <Setter.Value>
+                                            <TransformGroup>
+                                                <ScaleTransform />
+                                                <SkewTransform />
+                                                <RotateTransform Angle="-90" />
+                                                <TranslateTransform />
+                                            </TransformGroup>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                                <Trigger Property="TabStripPlacement" Value="Right">
+                                    <Setter Property="LayoutTransform" TargetName="PART_Content">
+                                        <Setter.Value>
+                                            <TransformGroup>
+                                                <ScaleTransform />
+                                                <SkewTransform />
+                                                <RotateTransform Angle="90" />
+                                                <TranslateTransform />
+                                            </TransformGroup>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="true">
+                                    <Setter Property="Background" Value="{DynamicResource BackgroundSelected}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrushSelected}" />
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource BackgroundHighlighted}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrushHighlighted}" />
+                                </Trigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsMouseOver" Value="True" />
+                                        <Condition Property="IsSelected" Value="True" />
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Background" Value="{DynamicResource BackgroundSelected}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrushSelected}" />
+                                </MultiTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="ListViewGroup" TargetType="{x:Type ListView}">
+                <Setter Property="OverridesDefaultStyle" Value="True"/>
+                <Setter Property="AlternationCount" Value="2"/>
+                <Setter Property="Background" Value="{DynamicResource WhiteBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BlackBrush}"/>
+                <Setter Property="BorderThickness" Value="0,1,0,0"/>
+                <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+                <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+                <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListView}">
+                            <Border x:Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                                <ScrollViewer Padding="{TemplateBinding Padding}" Style="{DynamicResource MetroGridViewScrollViewerStyle}">
+                                    <ItemsPresenter/>
+                                </ScrollViewer>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsGrouping" Value="True">
+                                    <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="BorderBrush" TargetName="Border" Value="{DynamicResource GrayBrush9}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Dialog:CustomDialog x:Key="newProjectWindow"
+                                 DataContext="{Binding Source={StaticResource Locator}, Path=ProjectConfig}">
+                <AdornerDecorator >
+                    <uc:ProjectConfigControl
+                        DataContext="{Binding ProjectConfig}"
+                        ProjectName="{Binding ProjectName, Mode=TwoWay}"
+                        ProjectPath="{Binding ProjectPath, Mode=TwoWay}"
+                        DatabaseIP="{Binding DatabaseIP, Mode=TwoWay}"
+                        DatabasePort="{Binding DatabasePort, Mode=TwoWay}"
+                        DatabaseName="{Binding DatabaseName, Mode=TwoWay}"
+                        DatabaseUserName="{Binding DatabaseUserName, Mode=TwoWay}"
+                        DatabasePassword="{Binding DatabasePassword, Mode=TwoWay}"
+                        MapSourcePath="{Binding MapSourcePath, Mode=TwoWay}"
+                        MapSourceOutputPath="{Binding MapSourceOutputPath, Mode=TwoWay}"
+                        NpcPicturePath="{Binding NpcPicturePath, Mode=TwoWay}"
+                        MonsterPicturePath="{Binding MonsterPicturePath, Mode=TwoWay}"
+                        MapSoundPath="{Binding MapSoundPath, Mode=TwoWay}"
+                        >
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="OK">
+                                <command:EventToCommand Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Dialog:CustomDialog}}, Path=DataContext.NewProjectOKHandle}"></command:EventToCommand>
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="Cancel">
+                                <command:EventToCommand Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Dialog:CustomDialog}}, Path=DataContext.NewProjectCancelHandle}"></command:EventToCommand>
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="ConnectTest">
+                                <command:EventToCommand Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Dialog:CustomDialog}}, Path=DataContext.TestConnect}"></command:EventToCommand>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </uc:ProjectConfigControl>
+                </AdornerDecorator>
+            </Dialog:CustomDialog>
+
+            <Dialog:CustomDialog x:Key="newMonsterWindow" Title="新建怪物"
+                                 DataContext="{Binding Source={StaticResource Locator}}">
+                <AdornerDecorator>
+                    <uc:MonsterConfigControl CurrentMonsterData="{Binding Path=MapEditorStatus.MapEditorStatus.CurrentMonster}" 
+                                             MonsterCollectionData="{Binding Path=LibrarySource.LibrarySource.MonsterCollection, Mode=TwoWay}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="OK">
+                                <command:EventToCommand Command="{Binding Path=MonsterConfig.NewMonsterOKHandle}"
+                                                        PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="Cancel">
+                                <command:EventToCommand Command="{Binding Path=MonsterConfig.NewMonsterCancelHandle}"
+                                                        PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </uc:MonsterConfigControl>
+                </AdornerDecorator>
+            </Dialog:CustomDialog>
+
+            <Color x:Key="BackgroundColor">#2D2D30</Color>
+            <Color x:Key="ForegroundColor">#FFFFFF</Color>
+
+            <SolidColorBrush Color="{StaticResource BackgroundColor}" x:Key="bgBrush"></SolidColorBrush>
+            <SolidColorBrush Color="{StaticResource ForegroundColor}" x:Key="foreBrush"></SolidColorBrush>
+
+            <Dialog:CustomDialog x:Key="messageBox"
+                                 DataContext="{Binding Source={StaticResource Locator}, Path=CostumeMessageDialog}"
+                                 >
+                <AdornerDecorator>
+                    <uc:CostumeMessageDialogControl
+                        Title="{Binding Title}"
+                        Message="{Binding Message}"
+                        ButtonType="{Binding ButtonType}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="OK">
+                                <command:EventToCommand Command="{Binding MessageBoxOK}"></command:EventToCommand>
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="Cancel">
+                                <command:EventToCommand Command="{Binding MessageDialogCancle}"></command:EventToCommand>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </uc:CostumeMessageDialogControl>
+                </AdornerDecorator>
+            </Dialog:CustomDialog>
+
+            <Dialog:CustomDialog x:Key="waitingDialog"
+                                 DataContext="{Binding Source={StaticResource Locator}, Path=CostumeWaitingDialog}"
+                                 >
+                <AdornerDecorator>
+                    <uc:CostumeWaitingDialogControl
+                        Title="{Binding Title}"
+                        Message="{Binding Message}"
+                        CancelVaild="{Binding CancelVaild}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Cancel">
+                                <command:EventToCommand Command="{Binding WaitingDialogCancle}"></command:EventToCommand>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </uc:CostumeWaitingDialogControl>
+                </AdornerDecorator>
+            </Dialog:CustomDialog>
+
+            <Dialog:CustomDialog x:Key="dropItemInfoDialog"
+                                 DataContext="{Binding Source={StaticResource Locator}}"
+                                 Title="编辑掉落信息"
+                                 >
+                <AdornerDecorator>
+                    <uc:DropItemInfoListControl 
+                        DropItemInfoString="{Binding Path=LibrarySource.LibrarySource.CurrentMapSection.DropInfo, Mode=TwoWay}"
+                        CurrentItemsInfo="{Binding Path=LibrarySource.LibrarySource.CurrentItemsInfo, Mode=OneWay}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="EditConfirm">
+                                <command:EventToCommand Command="{Binding Path=LibrarySource.EditConfirm}"></command:EventToCommand>
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="EditCancel">
+                                <command:EventToCommand Command="{Binding Path=LibrarySource.EditCancel}"></command:EventToCommand>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </uc:DropItemInfoListControl>
+                </AdornerDecorator>
+            </Dialog:CustomDialog>
+
+            <Dialog:CustomDialog x:Key="sceneMonsterConfigDialog" DataContext="{StaticResource Locator}">
+                <AdornerDecorator>
+                    <uc:SceneMonsterConfigControl
+                    CurrentSceneMonsterPOJO="{Binding Path=MapEditorStatus.MapEditorStatus.CurrentSceneMonster, Mode=TwoWay}"
+                    Modifying="{Binding Path=LibrarySource.SceneMonsterModifying, Mode=OneWay}"
+                    CurrentSceneMonsterPOJOs="{Binding Path=LibrarySource.LibrarySource.CurrentMapSceneMonsterPOJOs, Mode=OneWay}"
+                    CurrentMonsterPicturePath="{Binding Path=ProjectConfig.CurrentProjectConfig.MonsterPicturePath, Mode=OneWay}"
+                    CurrentMapID="{Binding Path=LibrarySource.LibrarySource.CurrentMapSection.MapID, Mode=OneWay}">
+
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="OK">
+                                <command:EventToCommand Command="{Binding Path=LibrarySource.SceneMonsterEditOK}"
+                                                    EventArgsConverterParameter="{Binding}"
+                                                    PassEventArgsToCommand="True"></command:EventToCommand>
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="Cancel">
+                                <command:EventToCommand Command="{Binding Path=LibrarySource.SceneMonsterEditCancel}"
+                                                    EventArgsConverterParameter="{Binding}"
+                                                    PassEventArgsToCommand="True"></command:EventToCommand>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+
+                    </uc:SceneMonsterConfigControl>
+                </AdornerDecorator>
+            </Dialog:CustomDialog>
+
+            <Dialog:CustomDialog x:Key="baseRewardInfoDialog" DataContext="{StaticResource Locator}" Title="编辑基础奖励信息">
+                <AdornerDecorator>
+                    <uc:BaseRewardInfoControl
+                        BaseRewardString="{Binding MapEditorStatus.MapEditorStatus.CurrentSceneMonster.BaseRewardInfo, Mode=TwoWay}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Confirm">
+                                <command:EventToCommand Command="{Binding Path=LibrarySource.BaseRewardInfoEditOK}"></command:EventToCommand>
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="Cancel">
+                                <command:EventToCommand Command="{Binding Path=LibrarySource.BaseRewardInfoEditCancel}"></command:EventToCommand>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+
+                    </uc:BaseRewardInfoControl>
+                </AdornerDecorator>
+            </Dialog:CustomDialog>
+
+            <Dialog:CustomDialog x:Key="missionRewardInfoDialog" DataContext="{StaticResource Locator}" Title="编辑任务奖励信息">
+                <AdornerDecorator>
+                    <uc:MissionRewardInfoControl
+                        MissionString="{Binding MapEditorStatus.MapEditorStatus.CurrentSceneMonster.TaskRewardInfo, Mode=TwoWay}"
+                        CurrentItemPOJOs="{Binding Path=LibrarySource.LibrarySource.CurrentItemsInfo, Mode=OneWay}"
+                        CurrentMissionPOJOs="{Binding Path=LibrarySource.LibrarySource.CurrentMissionPOJOs, Mode=OneWay}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Confirm">
+                                <command:EventToCommand Command="{Binding Path=LibrarySource.TaskRewardInfoEditOK}"></command:EventToCommand>
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="Cancel">
+                                <command:EventToCommand Command="{Binding Path=LibrarySource.TaskRewardInfoEditCancel}"></command:EventToCommand>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+
+                    </uc:MissionRewardInfoControl>
+                </AdornerDecorator>
+            </Dialog:CustomDialog>
+
+
+            <util:ModifySelectedAreaEventConverter x:Key="msaec"></util:ModifySelectedAreaEventConverter>
+            <util:MonsterDropConverter x:Key="dhcv"/>
+            <util:SelectedHistoryPathConverter x:Key="shpc"></util:SelectedHistoryPathConverter>
+            <util:MapSectionChangedEventConverter x:Key="mapSectionChangedEventConverter"></util:MapSectionChangedEventConverter>
+            <util:CurrentMonsterChangedConverter x:Key="cmcv"/>
+            <util:CurrentMusicSectionChangedConverter x:Key="mdcv"/>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Window.DataContext>
+        <Binding Source="{StaticResource Locator}"></Binding>
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1047*"/>
+            <ColumnDefinition Width="281*"/>
+            <ColumnDefinition Width="264*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="18*"/>
+            <RowDefinition Height="28*"/>
+            <RowDefinition Height="214*"/>
+            <RowDefinition Height="609*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Background="IndianRed"/>
+
+        <!-- Menu-->
+        <uc:MenuControl Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" 
+                        ProjectExist="{Binding Menu.ProjectExist}"
+                        HistoryPath="{Binding Menu.HistorySource, Mode=OneWay}"
+                        CurrentMapValid="{Binding MapEditorStatus.MapEditorStatus.Valid, Mode=OneWay}"
+                        >
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="NewProject">
+                    <command:EventToCommand Command="{Binding Menu.NewProjectHandle}"></command:EventToCommand>
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="ProjectConfig">
+                    <command:EventToCommand Command="{Binding Menu.ProjectConfigHandle}"></command:EventToCommand>
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="OpenProject">
+                    <command:EventToCommand Command="{Binding Menu.OpenProjectHandle}"></command:EventToCommand>
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="OpenHistory">
+                    <command:EventToCommand Command="{Binding Menu.OpenHistoryHandle}" EventArgsConverter="{StaticResource ResourceKey=shpc}" PassEventArgsToCommand="True"></command:EventToCommand>
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="Output">
+                    <command:EventToCommand Command="{Binding Menu.OutputHandle}"></command:EventToCommand>
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="CutMap">
+                    <command:EventToCommand Command="{Binding Menu.CutMapHandle}"></command:EventToCommand>
+                </i:EventTrigger>
+
+            </i:Interaction.Triggers>
+        </uc:MenuControl>
+        <!-- ToolBar-->
+        <uc:ToolBarControl Grid.Column="0" Grid.Row="1" DataContext="{Binding}" 
+                           DragToolSelected="{Binding ToolBar.ToolBarStatus.DragToolSelected, Mode=OneWayToSource}"
+                           AreaToolSelected="{Binding ToolBar.ToolBarStatus.AreaToolSelected, Mode=OneWayToSource}"
+                           PenToolSelected="{Binding ToolBar.ToolBarStatus.PenToolSelected, Mode=OneWayToSource}"
+                           PointToolSelected="{Binding ToolBar.ToolBarStatus.PointToolSelected, Mode=OneWayToSource}"
+                           TransparentSelected="{Binding ToolBar.ToolBarStatus.TransparentSelected, Mode=OneWayToSource}"
+                           Safety="{Binding ToolBar.ToolBarStatus.Safety, Mode=OneWayToSource}"
+                           Fishing="{Binding ToolBar.ToolBarStatus.Fishing, Mode=OneWayToSource}"
+                           CanEdit="{Binding ToolBar.ToolBarStatus.CanEdit, Mode=OneWay}"
+                           ProjectValid="{Binding Menu.ProjectExist}"
+                           >
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Sync">
+                    <command:EventToCommand Command="{Binding ToolBar.SyncHandle}"></command:EventToCommand>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </uc:ToolBarControl>
+        <!-- MapEidtor-->
+        <uc:MapEditorControl
+                x:Name="mapEditor"
+                DataContext="{Binding}"
+                Grid.Column="0"
+                Grid.Row="2"
+                Grid.RowSpan="2" 
+                TileWidth="{Binding MapEditorStatus.MapEditorStatus.TileWidth}"
+                TileHeight="{Binding MapEditorStatus.MapEditorStatus.TileHeight}"
+                BackgroundSource="{Binding MapEditorStatus.MapEditorStatus.BackgroundSource}"
+                Zoom="{Binding MapEditorStatus.MapEditorStatus.Zoom}"
+                ContentWidthRatio="{Binding MapEditorStatus.MapEditorStatus.ContentWidthRatio, Mode=OneWayToSource}"
+                ContentHeightRatio="{Binding MapEditorStatus.MapEditorStatus.ContentHeightRatio, Mode=OneWayToSource}"
+                ScrollVerticalOffsetRatio="{Binding MapEditorStatus.MapEditorStatus.ContentVerticalOffsetRatio, Mode=TwoWay}"
+                ScrollHorizentalOffsetRatio="{Binding MapEditorStatus.MapEditorStatus.ContentHorizentalOffsetRatio, Mode=TwoWay}"
+                DefaultBornPointImage="image\\born_point.bmp"
+                BornPointX="{Binding MapEditorStatus.MapEditorStatus.BornPointX, Mode=TwoWay}"
+                BornPointY="{Binding MapEditorStatus.MapEditorStatus.BornPointY, Mode=TwoWay}"
+                
+                DragToolSelected="{Binding ToolBar.ToolBarStatus.DragToolSelected, Mode=OneWay}"
+                AreaToolSelected="{Binding ToolBar.ToolBarStatus.AreaToolSelected, Mode=OneWay}"
+                PenToolSelected="{Binding ToolBar.ToolBarStatus.PenToolSelected, Mode=OneWay}"
+                PointToolSelected="{Binding ToolBar.ToolBarStatus.PointToolSelected, Mode=OneWay}"
+                TransparentSelected="{Binding ToolBar.ToolBarStatus.TransparentSelected, Mode=OneWay}"
+                Safety="{Binding ToolBar.ToolBarStatus.Safety, Mode=OneWay}"
+                Fishing="{Binding ToolBar.ToolBarStatus.Fishing, Mode=OneWay}"
+                ToolBarCanEdit="{Binding ToolBar.ToolBarStatus.CanEdit, Mode=OneWayToSource}"
+                
+                Valid="{Binding MapEditorStatus.MapEditorStatus.Valid, Mode=OneWayToSource}"
+                MapPixelWidth="{Binding MapEditorStatus.MapEditorStatus.MapPixelWidth, Mode=OneWayToSource}"
+                MapPixelHeight="{Binding MapEditorStatus.MapEditorStatus.MapPixelHeight, Mode=OneWayToSource}"
+            
+                ItemSource="{Binding MapEditorStatus.MapEditorStatus.MapObjectCollection, Mode=TwoWay}"
+                CurrentSceneMonsters="{Binding MapEditorStatus.MapEditorStatus.CurrentMonsters}"
+                CurrentNpcs="{Binding MapEditorStatus.MapEditorStatus.CurrentNpcs}"
+                CurrentMonster="{Binding MapEditorStatus.MapEditorStatus.CurrentMonster, Mode=OneWayToSource}"
+                CurrentSceneMonster="{Binding MapEditorStatus.MapEditorStatus.CurrentSceneMonster, Mode=OneWayToSource}"
+                CurrentNPC="{Binding MapEditorStatus.MapEditorStatus.CurrentNpc, Mode=OneWayToSource}"
+                CurrentMapID="{Binding LibrarySource.LibrarySource.CurrentMapSection.MapID, Mode=OneWay}"
+                >
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="ModifySelectedArea">
+                    <command:EventToCommand Command="{Binding MapEditorStatus.ModifySelectedAreaHandler}"
+                                            EventArgsConverter="{StaticResource ResourceKey=msaec}"
+                                            EventArgsConverterParameter="{Binding}"
+                                            PassEventArgsToCommand="True">
+                    </command:EventToCommand>
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="Drop">
+                    <command:EventToCommand Command="{Binding MapEditorStatus.DropHandler}"
+                                            EventArgsConverter="{StaticResource dhcv}"
+                                            EventArgsConverterParameter="{Binding}"
+                                            PassEventArgsToCommand="True"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+
+        </uc:MapEditorControl>
+        <uc:NavigationControl Grid.Column="2" Grid.Row="1" Grid.RowSpan="2"
+                              DataContext="{Binding MapEditorStatus.MapEditorStatus}"
+                              BackgroundSource="{Binding BackgroundSource}"
+                              ContentWidthRatio="{Binding ContentWidthRatio}"
+                              ContentHeightRatio="{Binding ContentHeightRatio}"
+                              ContentVerticalOffset="{Binding ContentVerticalOffsetRatio, Mode=TwoWay}"
+                              ContentHorizentalOffset="{Binding ContentHorizentalOffsetRatio, Mode=TwoWay}"
+                              Zoom="{Binding Zoom, Mode=OneWayToSource}"
+                              IsEnabled="False"
+                              Margin="20"/>
+        <!--Library-->
+        <uc:LibraryControl Grid.Column="2" Grid.Row="3"
+                           MapData="{Binding LibrarySource.LibrarySource.MapCollection}"
+                           MusicData="{Binding LibrarySource.LibrarySource.MusicCollection}"
+                           MonsterData="{Binding LibrarySource.LibrarySource.MonsterCollection}"
+                           CurrentMusicId="{Binding LibrarySource.LibrarySource.CurrentMapSection.SoundId, Converter={StaticResource ResourceKey=mdcv}, Mode=TwoWay}"
+                           ProjectExistData="{Binding Menu.ProjectExist}"
+                           MapValidData="{Binding MapEditorStatus.MapEditorStatus.Valid}"
+                           >
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="NewMonster">
+                    <command:EventToCommand Command="{Binding LibrarySource.NewMonsterHandle}"/>
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="ChangeMonster">
+                    <command:EventToCommand Command="{Binding LibrarySource.ChangeMonsterHandle}"/>
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="CurrentMapChanged">
+                    <command:EventToCommand Command="{Binding LibrarySource.CurrentMapChangedHandle}"
+                                            EventArgsConverter="{StaticResource ResourceKey=mapSectionChangedEventConverter}"
+                                            EventArgsConverterParameter="{Binding}"
+                                            PassEventArgsToCommand="True"/>
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="CurrentMonsterChanged">
+                    <command:EventToCommand Command="{Binding LibrarySource.CurrentMonsterChangedHandle}"
+                                            EventArgsConverter="{StaticResource cmcv}"
+                                            EventArgsConverterParameter="{Binding}"
+                                            PassEventArgsToCommand="True"/>
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="MusicError">
+                    <command:EventToCommand Command="{Binding LibrarySource.MusicErrorHandle}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </uc:LibraryControl>
+
+        <uc:PropertyControl Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" Margin="30,0,0,0"
+                            CurrentMapSection="{Binding Path=LibrarySource.LibrarySource.CurrentMapSection}"
+                            CurrentMonsterSection="{Binding Path=MapEditorStatus.MapEditorStatus.CurrentMonster}"
+                            CurrentSceneMonsterPOJO="{Binding Path=MapEditorStatus.MapEditorStatus.CurrentSceneMonster, Mode=TwoWay}"
+                            CurrentMapSceneMonsterPOJOs="{Binding Path=LibrarySource.LibrarySource.CurrentMapSceneMonsterPOJOs}"
+                            CurrentMapID="{Binding Path=LibrarySource.LibrarySource.CurrentMapSection.MapID}"
+                            CurrentNpcSection="{Binding Path=MapEditorStatus.MapEditorStatus.CurrentNpc}"
+                            CurrentNpcCollectionData="{Binding Path=LibrarySource.LibrarySource.CurentNpcs}"
+                            >
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="ShowDropInfo">
+                    <command:EventToCommand Command="{Binding LibrarySource.ShowDropInfo}"/>
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="ModifySceneMonster">
+                    <command:EventToCommand Command="{Binding LibrarySource.ModifySceneMonster}"/>
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="NewSceneMonster">
+                    <command:EventToCommand Command="{Binding LibrarySource.NewSceneMonster}"/>
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="BaseRewardEdit">
+                    <command:EventToCommand Command="{Binding LibrarySource.BaseRewardEdit}"/>
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="MissionRewardEdit">
+                    <command:EventToCommand Command="{Binding LibrarySource.MissionRewardEdit}"/>
+                </i:EventTrigger>
+
+            </i:Interaction.Triggers>
+        </uc:PropertyControl>
+
+    </Grid>
+</Controls:MetroWindow>

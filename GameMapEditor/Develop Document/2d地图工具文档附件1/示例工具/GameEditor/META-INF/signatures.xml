@@ -1,0 +1,38 @@
+<signatures>
+  <Signature xmlns="http://www.w3.org/2000/09/xmldsig#" Id="PackageSignature">
+    <SignedInfo>
+      <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+      <SignatureMethod Algorithm="http://www.w3.org/TR/xmldsig-core#rsa-sha1"/>
+      <Reference URI="#PackageContents">
+        <Transforms>
+          <Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+        </Transforms>
+        <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+        <DigestValue>1+evNGWL8cy2plwaxDcoHX8n/fL05BvQYT9HB1mWZIA=</DigestValue>
+      </Reference>
+    </SignedInfo>
+    <SignatureValue Id="PackageSignatureValue">doQsXwfd4XAgLZpQMJlp6dcDJKhHqr2ax5sn9l2nbdLg7Q1rDlFFbweUxLiWsUbcz2ubRI0rSQPB
+DIHevCDeVNkWEXFjB0cF4J5DxNmkDktmcUf+Cmln0LNEjDvXPq8qOdO4VsBmvxyiZLZf/jaceQrw
+CjV7eDADUfWKqri9dDY=</SignatureValue>
+    <KeyInfo>
+      <X509Data>
+        <X509Certificate>MIICDjCCAXagAwIBAgIZODJlYmRlNDoxNGYxNWE4ZjM5MjotODAwMDANBgkqhkiG9w0BAQUFADA0
+MQswCQYDVQQGEwJDTjELMAkGA1UEChMCY2MxCzAJBgNVBAsTAmNjMQswCQYDVQQDEwJjYzAeFw0x
+NTA4MDkwMzMwMzhaFw00MDA4MTAwMzMwMzhaMDQxCzAJBgNVBAYTAkNOMQswCQYDVQQKEwJjYzEL
+MAkGA1UECxMCY2MxCzAJBgNVBAMTAmNjMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCPUiMZ
+wmKS7mazoWOAjNV69q8zYT06CtcYuHz9pYruIIDzTPEPFg7ANVLh4pOJAxewNioD3UviI38ERe2R
+vr4wzpaOs8FfaIaJ039aYNSabXx61VAN+q9qQUGUGF+CPXGNBSfQFZAJOvkd9cneC3GZTwt2QE+p
+rNdfC63JABApawIDAQABoxcwFTATBgNVHSUEDDAKBggrBgEFBQcDAzANBgkqhkiG9w0BAQUFAAOC
+AIEAdw0F5ZZlyDCm4+yOuWB2wmLgSD+XbiqKwSqoPKuYeN06E2rDA3hX/13QhBvFUeHUCXJi3KAc
+NKrp0CCyEWFcVI4jf0A9zm9TMBdmFHHVOkFABLBX2JKU4FDpas3ghduXpWTvO8xsWiOKLWlvpeV8
+8ad15eB0clvCTHNUe/FC/Qg=</X509Certificate>
+      </X509Data>
+    </KeyInfo>
+    <Object>
+      <Manifest Id="PackageContents">
+        <Reference URI="mimetype"><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod><DigestValue>0/oCb84THKMagtI0Dy0KogEu92TegdesqRr/clXct1c=</DigestValue></Reference><Reference URI="META-INF/AIR/application.xml"><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod><DigestValue>b+NiFg8m6s6tTaj4pBKz+j2FZkeIsvco/EUjs23uYJU=</DigestValue></Reference><Reference URI="GameEditor.swf"><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod><DigestValue>yGNAajiMYABK/kDBUwOjSGBQMN6SkBPKJ+oF3iLB7NY=</DigestValue></Reference>
+      </Manifest>
+    </Object>
+    
+  </Signature>
+</signatures>

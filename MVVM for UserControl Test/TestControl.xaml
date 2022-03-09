@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="MVVM_for_UserControl_Test.TestControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MVVM_for_UserControl_Test"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+
+    <UserControl.Resources>
+        <!--<local:TestViewModel x:Key="TestViewModel"/>-->
+        <local:ViewModelLocator x:Key="Locator"/>
+    </UserControl.Resources>
+
+    <UserControl.DataContext>
+        <Binding Source="{StaticResource Locator}" Path="Main"/>
+    </UserControl.DataContext>
+
+    <StackPanel>
+         <TextBox Text="{Binding ThisText}"></TextBox>
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,59 @@
+﻿<UserControl x:Class="MapEditorControl.MapObjectSpriteControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MapEditorControl"
+             xmlns:vm="clr-namespace:MapEditorControl.ViewModel"
+             xmlns:messenger="clr-namespace:GalaSoft.MvvmLight.Messaging;assembly=GalaSoft.MvvmLight"
+             xmlns:util="clr-namespace:MapEditorControl.InnerUtil"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+
+    <UserControl.Resources>
+        <!--<vm:ViewModelLocator x:Key="Locator"/>-->
+        <vm:MapObjectSpriteViewModel x:Key="UniqueViewModel"/>
+        <util:SelectedToBorderVisibilityConverter x:Key="SelectedConverter"/>
+        <messenger:Messenger x:Key="UniqueMessenger"/>
+    </UserControl.Resources>
+
+    <!--<Grid DataContext="{Binding Source={StaticResource Locator}, Path=MapObjectSprite}">-->
+    <Grid DataContext="{Binding Source={StaticResource UniqueViewModel}}">
+        <!--BorderBrush="{Binding Path=Selected, Converter={StaticResource SelectedConverter}}"-->
+        <Border BorderThickness="3" x:Name="border">
+
+            <Border.BorderBrush>
+                <LinearGradientBrush SpreadMethod="Repeat" StartPoint="0,5" EndPoint="5,0" MappingMode="Absolute">
+                    <LinearGradientBrush.GradientStops>
+                        <GradientStop Color="{Binding Path=Selected, Converter={StaticResource SelectedConverter}}" Offset="0"/>
+                        <GradientStop Color="{Binding Path=Selected, Converter={StaticResource SelectedConverter}}" Offset="0.2"/>
+                        <GradientStop Color="Transparent" Offset="0.4"/>
+                        <GradientStop Color="Transparent" Offset="0.6"/>
+                        <GradientStop Color="{Binding Path=Selected, Converter={StaticResource SelectedConverter}}" Offset="0.8"/>
+                        <GradientStop Color="{Binding Path=Selected, Converter={StaticResource SelectedConverter}}" Offset="1"/>
+                    </LinearGradientBrush.GradientStops>
+                </LinearGradientBrush>
+            </Border.BorderBrush>
+
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="9*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Canvas Height="{Binding Path=SpriteImage.Height}" Width="{Binding Path=SpriteImage.Width}" Grid.Row="0" x:Name="wrap_Canvas">
+                    <Canvas.Background>
+                        <ImageBrush x:Name="brush">
+                            <ImageBrush.ImageSource>
+                                <Binding Path="SpriteImage" Mode="OneWay"></Binding>
+                            </ImageBrush.ImageSource>
+                        </ImageBrush>
+                    </Canvas.Background>
+                </Canvas>
+                <TextBlock Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding SpriteText}"/>
+
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

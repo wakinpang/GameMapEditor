@@ -1,0 +1,867 @@
+﻿<UserControl x:Class="MapEditorControl.PropertyControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:MapEditorControl.ViewModel"
+             xmlns:local="clr-namespace:MapEditorControl"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:util="clr-namespace:MapEditorControl.InnerUtil"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+
+    <UserControl.Resources>
+        <x:Array Type="sys:String" x:Key="mapSelection">
+            <sys:String>大地图</sys:String>
+            <sys:String>单人地图</sys:String>
+            <sys:String>打宝地图（中立）</sys:String>
+        </x:Array>
+
+        <x:Array Type="sys:String" x:Key="pkType">
+            <sys:String>强制安全模式</sys:String>
+            <sys:String>可PK，配置PK区域</sys:String>
+            <sys:String>可PK，配置安全区域</sys:String>
+        </x:Array>
+
+        <x:Array Type="sys:String" x:Key="camp">
+            <sys:String>正</sys:String>
+            <sys:String>邪</sys:String>
+            <sys:String>中立</sys:String>
+        </x:Array>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Validation.ErrorTemplate" Value="{DynamicResource ValidationErrorTemplate}"/>
+        </Style>
+
+        <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True"/>
+        <util:ObjectNullCheckConverter x:Key="nullConverter"/>
+        <util:TabItemVisibilityConverter x:Key="visibilityConverter"/>
+        <util:BeatBackStringConverter x:Key="beatBackStringConverter"/>
+        <util:npcTypeConverter x:Key="npcTypeConverter"/>
+
+        <!--<CollectionViewSource  x:Key="cvs" Source="{Binding Source={StaticResource Locator}, Path=PropertyData.CurrentMonsterSceneMonsters}">
+            
+        </CollectionViewSource>-->
+
+        <!--<util:ScenmeMonsterListFilterConverter x:Key="filterConveter"/>-->
+    </UserControl.Resources>
+
+    <Grid DataContext="{Binding Source={StaticResource Locator}, Path=PropertyData}">
+        <TabControl TabStripPlacement="Top" x:Name="main_Tab" Margin="0,0,0,-554">
+            <TabItem Header="地图属性">
+                <StackPanel DataContext="{Binding CurrentMapSection}" IsEnabled="{Binding Converter={StaticResource nullConverter}}">
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBlock Text="类型" VerticalAlignment="Center" Grid.Column="0"/>
+                        <ComboBox Margin="2" MinWidth="130" 
+                              ItemsSource="{StaticResource mapSelection}"
+                              SelectedIndex="{Binding Type, Mode=TwoWay}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="名称" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBox Margin="2" MinWidth="130" 
+                                 Text="{Binding Source={StaticResource Locator}, Path=PropertyData.Name, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, Mode=TwoWay}"
+                                  Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="等级" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBox Margin="2" MinWidth="130" 
+                                 Text="{Binding Source={StaticResource Locator}, Path=PropertyData.Level, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, Mode=TwoWay}"
+                                  Grid.Column="2"/>
+                    </Grid>
+
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="音乐" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding SoundId}" Grid.Column="2"/>
+                    </Grid>
+
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="地图长度" VerticalAlignment="Center"  Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding Width}"  Grid.Column="2"/>
+                    </Grid>
+
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="地图宽度" VerticalAlignment="Center"  Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding Height}"  Grid.Column="2"/>
+                    </Grid>
+
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="出生地X" VerticalAlignment="Center"  Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding PosX}"  Grid.Column="2"/>
+                    </Grid>
+
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="出生地Y" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding PosY}" Grid.Column="2"/>
+                    </Grid>
+
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="分线数量" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBox Margin="2" MinWidth="130" 
+                                 Text="{Binding Source={StaticResource Locator}, Path=PropertyData.LineNum, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, Mode=TwoWay}"
+                                  Grid.Column="2"/>
+                    </Grid>
+
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="PK类型" VerticalAlignment="Center" Grid.Column="0"/>
+                        <ComboBox Margin="2" MinWidth="130"
+                                  ItemsSource="{StaticResource pkType}"
+                                  SelectedIndex="{Binding PkType}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="阵营" VerticalAlignment="Center" Grid.Column="0"/>
+                        <ComboBox Margin="2" MinWidth="130"
+                                  ItemsSource="{StaticResource camp}"
+                                  SelectedIndex="{Binding Camp}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="掉落信息" VerticalAlignment="Center" Grid.Column="0"/>
+                        <Button Margin="2" Content="详细..." MinWidth="130"
+                                Command="{Binding Source={StaticResource Locator}, Path=PropertyData.DropInfoButtonClicked}" Grid.Column="2"/>
+
+                    </Grid>
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="基本属性" DataContext="{Binding CurrentMonsterSection}" Visibility="{Binding Converter={StaticResource visibilityConverter}}">
+                <StackPanel>
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBlock Text="编号" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding MonsterID}" Grid.Column="2"/>
+                    </Grid>
+                    
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="名称" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding Name}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="等级" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding Level}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="经验" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding Exp}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="HP" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding Hp}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="MP" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding Mp}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="最小攻击" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding MinAtk}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="最大攻击" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding MaxAtk}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="武功攻击" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding MAtk}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="防御" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding Def}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="武功防御" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding MDef}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="命中几率" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding AtkRate}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="闪避几率" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding MissRate}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="武功命中" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding MAtkRate}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="武功闪避" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding MMissRate}" Grid.Column="2"/>
+                    </Grid>
+                 
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="攻击间隔" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding AtkCdtm}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="攻击范围" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding AtkRange}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="暴击几率" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding ExAtk}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="暴击伤害" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding ExDmg}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="移动速度" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding Move}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="是否反击" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding BeatBack,Converter={StaticResource beatBackStringConverter}}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="行为间隔" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding ActionInterval}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="巡逻范围" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding WalkRange}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="追击距离" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding ChaseRange}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="回血" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Text="{Binding HpResume}" Grid.Column="2"/>
+                    </Grid>
+
+                </StackPanel>
+            </TabItem>
+            
+            <TabItem Header="刷怪属性" DataContext="{Binding CurrentSceneMonsterPOJO}" Visibility="{Binding Converter={StaticResource visibilityConverter}}">
+                <StackPanel>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="场景怪编号" VerticalAlignment="Center" Grid.Column="0"/>
+                        <ComboBox Margin="2" MinWidth="130"
+                                  ItemsSource="{Binding Source={StaticResource Locator},
+                                                Path=PropertyData.CurrentScenmeMonsterPOJOsView}"
+                                  SelectedItem="{Binding Source={StaticResource Locator}, Path=PropertyData.CurrentSceneMonsterPOJO, Mode=TwoWay}"
+                                  DisplayMemberPath="SceneMonsterID" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="基础编号" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding MonsterID}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="场景类型" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding SceneType}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="场景编号" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding SceneID}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="世界等级" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding WorldLevel}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="阵营" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding Camp}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="类型" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding Type}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="层" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding Floor}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="怪物波数" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding MonsSeq}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="势力积分" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding Point}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="怪物名字" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding Name}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="形象" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding Style}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="模型缩放" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding ShowExt}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="复活时间" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding ReliveTime}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="怪物类型" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding MonsterType}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="基础奖励" VerticalAlignment="Center" Grid.Column="0"/>
+                        <Button Margin="2" MinWidth="130" Content="详细" Grid.Column="2" Command="{Binding Source={StaticResource Locator}, Path=PropertyData.OpenBaseRewardEditControl}"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="任务奖励" VerticalAlignment="Center" Grid.Column="0"/>
+                        <Button Margin="2" MinWidth="130" Content="详细" Grid.Column="2" Command="{Binding Source={StaticResource Locator}, Path=PropertyData.OpenMissionRewardEditControl}"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="掉落编号" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding ItemDropID}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="技能数据" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding SkillData}" Grid.Column="2"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="怪物包数" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Text="{Binding Num}" Grid.Column="2"/>
+                    </Grid>
+
+                    <StackPanel Orientation="Vertical">
+                        <Button Content="修改当前场景怪模板" Grid.Column="0" Margin="5 0 5 0" MinHeight="32"
+                                Command="{Binding Source={StaticResource Locator}, Path=PropertyData.EditSceneMonsterButtonClicked}"></Button>
+                        <Button Content="新建场景怪模板" Grid.Column="1" Margin="5 5 5 0" MinHeight="32" 
+                                Command="{Binding Source={StaticResource Locator}, Path=PropertyData.NewSceneMonsterButtonClicked}"></Button>
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="NPC属性" DataContext="{Binding CurrentNpcSection}" Visibility="{Binding Converter={StaticResource visibilityConverter}}">
+                <StackPanel Grid.Row="0">
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="编号" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBox Margin="2" MinWidth="130"  Grid.Column="2">
+                            <TextBox.Text>
+                                <Binding Path="NPCId" NotifyOnValidationError="True" ValidatesOnDataErrors="True" ValidatesOnExceptions="True" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay">
+                                    <Binding.ValidationRules>
+                                        <util:NpcIDCheckRule>
+                                            <util:NpcIDCheckRule.InnerNpcInfo>
+                                                <util:InnerNpcInfo CurrentNpcsInfo="{Binding Source={StaticResource Locator}, Path=PropertyData.CurrentNpcCollection}"
+                                                                   CurrentNpc="{Binding Source={StaticResource Locator}, Path=PropertyData.CurrentNpcSection}">
+                                                </util:InnerNpcInfo>
+                                            </util:NpcIDCheckRule.InnerNpcInfo>
+                                        </util:NpcIDCheckRule>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="名称" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBox Margin="2" MinWidth="130"  Grid.Column="2"
+                                 Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="类型" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130"  Grid.Column="2"
+                                   Text="{Binding Type, Converter={StaticResource npcTypeConverter}}"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="形象" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBox Margin="2" MinWidth="130" Grid.Column="2"
+                                 Text="{Binding Style, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="地图编号" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Grid.Column="2"
+                                   Text="{Binding MapId}"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="坐标X" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Grid.Column="2"
+                                   Text="{Binding PosX}"/>
+                    </Grid>
+
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="坐标Y" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBlock Margin="2" MinWidth="130" Grid.Column="2"
+                                   Text="{Binding PosY}"/>
+                    </Grid>
+
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="描述" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBox Margin="2" MinWidth="130" Grid.Column="2"
+                                 Text="{Binding Detail, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="缩放倍数" VerticalAlignment="Center" Grid.Column="0"/>
+                        <TextBox Margin="2" MinWidth="130" Grid.Column="2"
+                                 Text="{Binding StyleExt, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+
+
+                    <Grid MinHeight="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="称号文件" VerticalAlignment="Center" Grid.Column="0"/>
+                        <ComboBox Margin="2" MinWidth="130" Grid.Column="2"/>
+                    </Grid>
+                </StackPanel>
+
+            </TabItem>
+        </TabControl>
+
+    </Grid>
+</UserControl>
